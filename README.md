@@ -1,2 +1,2 @@
-# Lecture-Introduction-of-AI
-This repository contains assignments from the course 'Introduction of Artificial Intelligence'.
+# Assignments-of-Lecture
+This repository contains programming assignments from courses: 'OpenSource Software', 'Introduction of AI', and 'Algorithm'.
