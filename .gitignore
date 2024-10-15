@@ -1,0 +1,11 @@
+# Default ignored files
+/shelf/
+*.xml
+*.iml
+!docs
+.vscode/
+.idea/
+.DS_Store
+*.dSYM
+Algorithm/*
+!Algorithm/*.cpp
