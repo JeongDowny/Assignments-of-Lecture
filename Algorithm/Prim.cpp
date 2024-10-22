@@ -4,26 +4,26 @@
 #include <algorithm>
 using namespace std;
 
-struct Edge // 엣지 구조체 정의
+struct Edge // 출발점, 도착점, 가중치
 {
     int u, v, w;
     Edge(int u, int v, int w) : u(u), v(v), w(w) {}
 };
 
-void primMST(int V, vector<vector<pair<int, int>>> &node)
+void primMST(int V, vector<vector<pair<int, int>>> &node) // 프림 함수
 {
-    vector<bool> visited(V, false);
-    priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> pq; // 우선순위 큐 정의
+    vector<bool> visited(V, false);                                                                                      // 방문 여부 기록
+    priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> pq; // 가중치를 기준으로 오름차순 정렬하는 우선순위 큐 정의
 
     visited[0] = true;
-    for (int i = 0; i < node[0].size(); ++i)
+    for (int i = 0; i < node[0].size(); ++i) // 0에서 도달할 수 있는 노드를 큐에 푸쉬
     {
         int v = node[0][i].first;
         int w = node[0][i].second;
         pq.push(make_pair(w, make_pair(0, v)));
     }
 
-    vector<Edge> mst;
+    vector<Edge> mst; // 최소 신장 트리
 
     while (!pq.empty() && mst.size() < V - 1)
     {
