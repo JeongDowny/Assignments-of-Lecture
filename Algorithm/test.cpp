@@ -1,65 +1,77 @@
 #include <iostream>
 #include <vector>
-#include <queue>
 #include <algorithm>
-#define INF 1e9
+#include <iomanip>
+
 using namespace std;
 
-void dajik(vector<vector<int>> &graph, vector<int> &nodes, int n, int start) // 다익스트라 함수
+// 물건을 정의하는 구조체
+struct Stuff
 {
-    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
-    pq.push({0, start});
-    nodes[start] = 0;
+    int weight;
+    int value;
+    int index;
+    double ratio; // 단위 무게당 가치
+};
 
-    while (!pq.empty())
-    {
-        int weight = pq.top().first;
-        int node = pq.top().second;
-        pq.pop();
-
-        for (int i = 1; i <= n; i++) // 1부터 n까지
-        {
-            if (graph[node][i] == 0)
-                continue;
-
-            int nextWeight = graph[node][i];
-            int nextNode = i;
-            int newWeight = weight + nextWeight;
-
-            if (nodes[nextNode] > newWeight) // 원래 가중치보다 새로운 가중치가 작을 때 업데이트
-            {
-                nodes[nextNode] = newWeight;
-                pq.push({newWeight, nextNode});
-            }
-        }
-    }
+// 단위 무게당 가치를 기준으로 내림차순 정렬하기 위한 비교 함수
+bool compare(Stuff a, Stuff b)
+{
+    return a.ratio > b.ratio;
 }
 
 int main()
 {
-    ios::sync_with_stdio(false);
-    cin.tie(NULL);
-    int n, m;
-    cin >> n >> m;
+    int n; // 물건의 개수
+    cin >> n;
 
-    vector<vector<int>> graph(n + 1, vector<int>(n + 1, 0)); // n+1로 설정
-    vector<int> nodes(n + 1, INF);                           // n+1로 설정
+    vector<Stuff> stuffs(n);
 
-    for (int i = 0; i < m; i++)
+    // 각 물건의 무게와 가치를 입력받음
+    for (int i = 0; i < n; i++)
     {
-        int temp1, temp2, temp3;
-        cin >> temp1 >> temp2 >> temp3;
-
-        graph[temp1][temp2] = temp3;
-        graph[temp2][temp1] = temp3;
+        cin >> stuffs[i].weight >> stuffs[i].value;
+        stuffs[i].index = i;
+        stuffs[i].ratio = (double)stuffs[i].value / stuffs[i].weight; // 단위 무게당 가치
     }
 
-    dajik(graph, nodes, n, 1); // start를 1로 수정
+    int capacity; // 배낭의 용량
+    cin >> capacity;
 
-    for (int i = 1; i <= n; i++) // 1부터 n까지 출력
+    // 물건을 단위 무게당 가치 기준, 내림차순으로 정렬
+    sort(stuffs.begin(), stuffs.end(), compare);
+
+    double totalValue = 0.0;                  // 배낭에 담긴 물건들의 총 가치
+    vector<pair<int, double>> selectedStuffs; // 선택된 물건과 그 비율
+
+    for (int i = 0; i < n; i++)
     {
-        cout << i << ' ' << (nodes[i] == INF ? -1 : nodes[i]) << '\n'; // INF인 경우 -1 출력
+        if (capacity == 0)
+            break; // 배낭이 꽉 차면 종료
+
+        // 현재 물건을 통째로 넣을 수 있는 경우
+        if (stuffs[i].weight <= capacity)
+        {
+            selectedStuffs.push_back({stuffs[i].index, 1.0}); // 물건 전체를 넣음
+            totalValue += stuffs[i].value;                    // 전체 가치 추가
+            capacity -= stuffs[i].weight;                     // 배낭 용량 감소
+        }
+        // 현재 물건을 나누어 넣어야 하는 경우
+        else
+        {
+            double fraction = (double)capacity / stuffs[i].weight; // 넣을 수 있는 비율 계산
+            selectedStuffs.push_back({stuffs[i].index, fraction}); // 물건의 일부만 넣음
+            totalValue += stuffs[i].value * fraction;              // 부분적으로 넣은 가치 추가
+            capacity = 0;                                          // 배낭이 꽉 참
+        }
     }
+
+    for (auto stuff : selectedStuffs)
+    {
+        cout << stuff.first << " " << fixed << setprecision(1) << stuff.second << endl;
+    }
+
+    cout << fixed << setprecision(0) << totalValue << endl;
 
     return 0;
 }
