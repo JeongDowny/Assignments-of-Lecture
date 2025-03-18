@@ -9,3 +9,8 @@
 *.dSYM
 Algorithm/*
 !Algorithm/*.cpp
+
+dataAnalysis/*.docx
+dataAnalysis/.ipynb_checkpoints/
+NLP/.ipynb_checkpoints/
+NLP/FinancialPhraseBank-v1.0
